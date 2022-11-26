@@ -2,9 +2,9 @@
 #ifndef __TARGET__
 #define __TARGET__
 
-#include "DisplayObject.h"
+#include "PhysicsObject.h"
 
-class Target : public DisplayObject
+class Target : public PhysicsObject
 {
 public:
 	Target();

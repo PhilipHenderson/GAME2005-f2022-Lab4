@@ -27,13 +27,13 @@ public:
 	float t = 1.0;
 	float dt = 1.0f / 60.0f;
 	float gravity = -9.81;
-	float airResistance = 0.9f;
+	float airResistance = 1.01f;
 	bool bShot= false;
 
-	float launchAngle = 0.0f;
+	float launchAngle = 45.0f;
 	float a = launchAngle;
 
-	float launchSpeed = 0.0f;
+	float launchSpeed = 10.0f;
 	float b = launchSpeed;
 	
 	float startingY = 400.0f;
@@ -56,8 +56,8 @@ private:
 
 
 	// Sprites
-	PhysicsObject* m_pBullet1{};
-	PhysicsObject* m_pBullet2{};
+	Target* m_pBullet1{};
+	Target* m_pBullet2{};
 
 	// UI Items
 	Button* m_pBackButton{};
@@ -67,7 +67,7 @@ private:
 	// Input Control
 	int m_pCurrentInputType{};
 	void GetKeyboardInput();
-	void ShootProjectile();
+	void ShootReset();
 	void ResetObjects();
 	//void ResetObjects2();
 

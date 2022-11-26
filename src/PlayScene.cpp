@@ -47,22 +47,7 @@ void PlayScene::Draw()
 	SDL_SetRenderDrawColor(Renderer::Instance().GetRenderer(), 210, 85, 45, 255);
 }
 
-void PlayScene::ShootProjectile()
-{
-	if (bShot)
-	{
-		glm::vec2 lastPosition = m_pBullet1->GetTransform()->position;
-		m_pBullet1->GetTransform()->position = lastPosition + AngleLengthToVector(launchAngle, launchSpeed);
-	}
-	else
-	{	
-		m_pBullet1->GetTransform()->position = glm::vec2(startPos1);
-		t = 0.0f;
-		v1.y = 20.f;
-	}
-}
-
-void PlayScene::ResetObjects()
+void PlayScene::ShootReset()
 {
 	if (bShot)
 	{
@@ -111,8 +96,7 @@ void PlayScene::Update()
 	std::cout << "\n";
 	physicsEngine.UpdatePhysics();
 	
-	ResetObjects();
-	ShootProjectile();
+	ShootReset();
 	UpdateDisplayList();
 }
 
@@ -169,13 +153,13 @@ void PlayScene::Start()
 	m_pCurrentInputType = static_cast<int>(InputType::KEYBOARD_MOUSE);
 
 	// Projectile
-	m_pBullet1 = new PhysicsObject();
+	m_pBullet1 = new Target();
 	AddChild(m_pBullet1);
 	m_pBullet1->GetTransform()->position = glm::vec2(startPos1);
 	physicsEngine.physicsObjects.push_back(m_pBullet1);
 
 	// Projectile
-	m_pBullet2 = new PhysicsObject();
+	m_pBullet2 = new Target();
 	AddChild(m_pBullet2);
 	m_pBullet2->GetTransform()->position = glm::vec2(startPos2);
 	physicsEngine.physicsObjects.push_back(m_pBullet2);

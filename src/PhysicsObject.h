@@ -1,6 +1,6 @@
 #pragma once
-#include "Target.h"
+#include "DisplayObject.h"
 
-class PhysicsObject : public Target
+class PhysicsObject : public DisplayObject
 {
 };
