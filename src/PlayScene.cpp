@@ -32,36 +32,86 @@ void PlayScene::Draw()
 
 	SDL_SetRenderDrawColor(Renderer::Instance().GetRenderer(), 255, 255, 255, 255);
 
-	v = AngleLengthToVector(launchAngle, launchSpeed);
-	endPoint = startPos + (AngleLengthToVector(launchAngle, launchSpeed) * glm::vec2(10, 10));
+	v1 = AngleLengthToVector(launchAngle, launchSpeed);
+	endPoint1 = startPos1 + (AngleLengthToVector(launchAngle, launchSpeed) * glm::vec2(10, 10));
 	
 	//Draw velocity vector
-	SDL_RenderDrawLineF(Renderer::Instance().GetRenderer(), startPos.x, startPos.y, endPoint.x, endPoint.y);
+	SDL_RenderDrawLineF(Renderer::Instance().GetRenderer(), startPos1.x, startPos1.y, endPoint1.x, endPoint1.y);
+
+	v2 = AngleLengthToVector(launchAngle, launchSpeed);
+	endPoint2 = startPos2 + (AngleLengthToVector(launchAngle, launchSpeed) * glm::vec2(10, 10));
+
+	//Draw velocity vector
+	SDL_RenderDrawLineF(Renderer::Instance().GetRenderer(), startPos2.x, startPos2.y, endPoint2.x, endPoint2.y);
 
 	SDL_SetRenderDrawColor(Renderer::Instance().GetRenderer(), 210, 85, 45, 255);
 }
 
 void PlayScene::ShootProjectile()
 {
-	//if (bShot)
-	//{
-	//	glm::vec2 lastPosition = m_pBullet->GetTransform()->position;
-	//	m_pBullet->GetTransform()->position = lastPosition + AngleLengthToVector(launchAngle, launchSpeed);
-	//	m_pBullet->GetTransform()->position.y -= g * t;
-	//}
-	//else
-	//{
-	//	m_pBullet->GetTransform()->position = glm::vec2(startPos);
-	//	t = 0.0f;
-	//	v.y = 20.f;
-	//}
+	if (bShot)
+	{
+		glm::vec2 lastPosition = m_pBullet1->GetTransform()->position;
+		m_pBullet1->GetTransform()->position = lastPosition + AngleLengthToVector(launchAngle, launchSpeed);
+	}
+	else
+	{	
+		m_pBullet1->GetTransform()->position = glm::vec2(startPos1);
+		t = 0.0f;
+		v1.y = 20.f;
+	}
 }
+
+void PlayScene::ResetObjects()
+{
+	if (bShot)
+	{
+	glm::vec2 lastPosition1 = m_pBullet1->GetTransform()->position;
+	glm::vec2 lastPosition2 = m_pBullet2->GetTransform()->position;
+
+	m_pBullet1->GetTransform()->position = lastPosition1 + AngleLengthToVector(launchAngle, launchSpeed);
+	m_pBullet2->GetTransform()->position = lastPosition2 + AngleLengthToVector(launchAngle, launchSpeed);
+	}
+	else
+	{
+		m_pBullet1->GetTransform()->position = glm::vec2(startPos1);
+		m_pBullet2->GetTransform()->position = glm::vec2(startPos2);
+
+		m_pBullet1->GetRigidBody()->velocity = glm::vec2(0.0f,0.0f);
+		m_pBullet2->GetRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+		
+		t = 0.0f;
+	}
+}
+
+//void PlayScene::ResetObjects2()
+//{
+//	if (bShot)
+//	{
+//		for (int i = 0; i < physicsEngine.physicsObjects.size(); i++)
+//		{
+//			glm::vec2 lastPosition = physicsEngine.physicsObjects[i]->GetTransform()->position;
+//			physicsEngine.physicsObjects[i]->GetTransform()->position = lastPosition + AngleLengthToVector(launchAngle, launchSpeed);
+//		}
+//	}
+//	else
+//	{
+//		for (int i = 0; i < physicsEngine.physicsObjects.size(); i++)
+//		{
+//			physicsEngine.physicsObjects[i]->GetTransform()->position = glm::vec2(rand()*1);
+//			physicsEngine.physicsObjects[i]->GetRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+//		}
+//	}
+//}
 
 void PlayScene::Update()
 {
 	t += dt;
+	std::cout << t;
+	std::cout << "\n";
 	physicsEngine.UpdatePhysics();
 	
+	ResetObjects();
 	ShootProjectile();
 	UpdateDisplayList();
 }
@@ -85,7 +135,7 @@ void PlayScene::GetKeyboardInput()
 	}
 	if (EventManager::Instance().IsKeyDown(SDL_SCANCODE_1))
 	{
-		Game::Instance().ChangeSceneState(SceneState::START);
+		Game::Instance().ChangeSceneState(SceneState::PLAY);
 	}
 	if (EventManager::Instance().IsKeyDown(SDL_SCANCODE_2))
 	{
@@ -94,7 +144,7 @@ void PlayScene::GetKeyboardInput()
 
 	if (EventManager::Instance().IsKeyDown(SDL_SCANCODE_SPACE))
 	{
-		if (!bShot)
+ 		if (!bShot)
 		{
 			bShot = true;
 			SDL_Delay(300);
@@ -110,7 +160,8 @@ void PlayScene::GetKeyboardInput()
 void PlayScene::Start()
 
 {
-	startPos = glm::vec2(x, y);
+	startPos1 = glm::vec2(x, y);
+	startPos2 = glm::vec2(400, 400);
 		// Set GUI Title
 	m_guiTitle = "Play Scene";
 
@@ -118,57 +169,18 @@ void PlayScene::Start()
 	m_pCurrentInputType = static_cast<int>(InputType::KEYBOARD_MOUSE);
 
 	// Projectile
-	m_pBullet = new Target();
-	AddChild(m_pBullet);
-	m_pBullet->GetTransform()->position = glm::vec2(startPos);
-	physicsEngine.physicsObjects.push_back(m_pBullet);
-	
-	// Back Button
-	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", GameObjectType::BACK_BUTTON);
-	m_pBackButton->GetTransform()->position = glm::vec2(300.0f, 550.0f);
-	m_pBackButton->AddEventListener(Event::CLICK, [&]()-> void
-	{
-		m_pBackButton->SetActive(false);
-		Game::Instance().ChangeSceneState(SceneState::START);
-	});
+	m_pBullet1 = new PhysicsObject();
+	AddChild(m_pBullet1);
+	m_pBullet1->GetTransform()->position = glm::vec2(startPos1);
+	physicsEngine.physicsObjects.push_back(m_pBullet1);
 
-	m_pBackButton->AddEventListener(Event::MOUSE_OVER, [&]()->void
-	{
-		m_pBackButton->SetAlpha(128);
-	});
+	// Projectile
+	m_pBullet2 = new PhysicsObject();
+	AddChild(m_pBullet2);
+	m_pBullet2->GetTransform()->position = glm::vec2(startPos2);
+	physicsEngine.physicsObjects.push_back(m_pBullet2);
 
-	m_pBackButton->AddEventListener(Event::MOUSE_OUT, [&]()->void
-	{
-		m_pBackButton->SetAlpha(255);
-	});
-	AddChild(m_pBackButton);
 
-	// Next Button
-	m_pNextButton = new Button("../Assets/textures/nextButton.png", "nextButton", GameObjectType::NEXT_BUTTON);
-	m_pNextButton->GetTransform()->position = glm::vec2(500.0f, 550.0f);
-	m_pNextButton->AddEventListener(Event::CLICK, [&]()-> void
-	{
-		m_pNextButton->SetActive(false);
-		Game::Instance().ChangeSceneState(SceneState::END);
-	});
-
-	m_pNextButton->AddEventListener(Event::MOUSE_OVER, [&]()->void
-	{
-		m_pNextButton->SetAlpha(128);
-	});
-
-	m_pNextButton->AddEventListener(Event::MOUSE_OUT, [&]()->void
-	{
-		m_pNextButton->SetAlpha(255);
-	});
-
-	AddChild(m_pNextButton);
-
-	/* Instructions Label */
-	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
-	m_pInstructionsLabel->GetTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
-
-	AddChild(m_pInstructionsLabel);
 
 	/* DO NOT REMOVE */
 	ImGuiWindowFrame::Instance().SetGuiFunction([this] { GUI_Function(); });
@@ -181,17 +193,17 @@ void PlayScene::GUI_Function()
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
 	//ImGui::ShowDemoWindow();
 	
-	ImGui::Begin("GAME2005_Lab3_HendersonPhilip", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
+	ImGui::Begin("GAME2005_Lab4_HendersonPhilip", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
 
 	ImGui::Separator();
 
-	ImGui::SliderFloat("Launch Angle", &launchAngle, 0.0f, 90.0f, "%.3f");
-	ImGui::SliderFloat("Launch Speed", &launchSpeed, 0.0f, 15.0f, "%.3f");
-	ImGui::SliderFloat("Starting Y", &startPos.y, 200.0f, 500.0f, "%.3f");	
-	ImGui::SliderFloat("Gravity", &g, -9.81f, 0.0f, "%.3f");
+	ImGui::SliderFloat("Time", &t, 0.0f, 100.0f);
+	ImGui::SliderFloat("Gravity", &gravity, -9.81f, 0.0f);
+	//ImGui::SliderFloat("Launch Angle", &launchAngle, 0.0f, 90.0f);
+	//ImGui::SliderFloat("Launch Speed", &launchSpeed, 0.0f, 15.0);
 
-	glm::vec2 velocity = AngleLengthToVector(launchAngle, launchSpeed);
-	ImGui::LabelText("Velocity Vector", "x:%f, y:%f", velocity.x, -velocity.y);
+	//glm::vec2 velocity = AngleLengthToVector(launchAngle, launchSpeed);
+	//ImGui::LabelText("Velocity Vector", "x:%f, y:%f", velocity.x, -velocity.y);
 
 	ImGui::Separator();
 

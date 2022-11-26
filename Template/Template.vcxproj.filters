@@ -147,7 +147,7 @@
     <ClCompile Include="..\src\PhysicsEngine.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsObject.cpp">
+    <ClCompile Include="..\src\PhysicsObject.cpp">
       <Filter>PhysicsEngine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -305,10 +305,10 @@
     <ClInclude Include="Projectile.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsObject.h">
+    <ClInclude Include="..\src\PhysicsEngine.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\PhysicsEngine.h">
+    <ClInclude Include="..\src\PhysicsObject.h">
       <Filter>PhysicsEngine</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,8 +1,7 @@
-//#pragma once
-//#include "Target"
-//
-//class PhysicsObject :
-//	public Target
-//{
-//};
+#pragma once
+#include "Target.h"
+class PhysicsObject :
+    public Target
+{
+};
 

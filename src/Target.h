@@ -2,10 +2,9 @@
 #ifndef __TARGET__
 #define __TARGET__
 
-#include "PhysicsEngine.h"
 #include "DisplayObject.h"
 
-class Target : public DisplayObject 
+class Target : public DisplayObject
 {
 public:
 	Target();
@@ -17,7 +16,6 @@ public:
 	virtual void Clean() override;
 
 private:
-	void Move();
 	void CheckBounds();
 	void Reset();
 };

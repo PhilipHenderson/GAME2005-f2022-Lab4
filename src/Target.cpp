@@ -10,7 +10,6 @@ Target::Target()
 	const auto size = TextureManager::Instance().GetTextureSize("circle");
 	SetWidth(static_cast<int>(size.x));
 	SetHeight(static_cast<int>(size.y));
-	//GetTransform()->position = glm::vec2(100.0f, 100.0f);
 	GetRigidBody()->velocity = glm::vec2(0, 0);
 	GetRigidBody()->isColliding = false;
 
@@ -28,17 +27,11 @@ void Target::Draw()
 
 void Target::Update()
 {
-	Move();
 	CheckBounds();
 }
 
 void Target::Clean()
 {
-}
-
-void Target::Move()
-{
-	GetTransform()->position = GetTransform()->position + GetRigidBody()->velocity * 5.0f;
 }
 
 void Target::CheckBounds()
